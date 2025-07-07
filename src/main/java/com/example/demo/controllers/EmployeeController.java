@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 public class EmployeeController {
@@ -20,7 +19,27 @@ public class EmployeeController {
     }
 
     @PostMapping("/createEmployee")
-    public String createEmployee(@RequestBody Employee employee){
+    public Employee createEmployee(@RequestBody Employee employee) {
         return employeeService.createEmployee(employee);
+    }
+
+    @GetMapping("/getEmployeeById/{id}")
+    public Employee getEmployeeById(@PathVariable int id){
+        return employeeService.getEmployeeById(id);
+    }
+
+    @DeleteMapping("/deleteEmployee/{id}")
+    public String deleteEmployee(@PathVariable int id){
+        return employeeService.deleteEmployee(id);
+    }
+
+    @PutMapping("/updateEmployee/{id}")
+    public Employee updateEmployee(@PathVariable int id, @RequestBody Employee employee) {
+        Employee updated = employeeService.updateEmployee(id, employee);
+        if (updated != null) {
+            return updated;
+        } else {
+            throw new RuntimeException("Employee not found with id: " + id);
+        }
     }
 }
