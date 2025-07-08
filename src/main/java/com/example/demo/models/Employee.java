@@ -1,28 +1,37 @@
 package com.example.demo.models;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name="employee")
 public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int eid;
 
-    private int id;
     private String name;
-    private String role;
+    private String job;
 
-    public Employee(int id, String name, String role) {
-        this.id = id;
-        this.name = name;
-        this.role = role;
+    public int getEid() {
+        return eid;
     }
 
-    @Override
-    public String toString() {
-        return "id:"+this.id+"\n"+"name:"+this.name+"\n"+"role:"+this.role;
+    public void setEid(int eid) {
+        this.eid = eid;
     }
 
-    public int getId() {
-        return id;
+    public void setRole(String role) {
+        this.job=role;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getRole() {
+        return job;
     }
 
     public String getName() {
@@ -31,13 +40,5 @@ public class Employee {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

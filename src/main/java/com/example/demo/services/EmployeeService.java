@@ -1,56 +1,63 @@
 package com.example.demo.services;
 
 import com.example.demo.models.Employee;
+import com.example.demo.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class EmployeeService {
 
-    List<Employee> employees=new ArrayList<>();
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    public Employee addEmployee(String name, String role) {
+        Employee e = new Employee();
+        e.setName(name);
+        e.setRole(role);
+        return employeeRepository.save(e); // eid will be auto-generated
+    }
 
     public List<Employee> getAllEmployees() {
-        return employees;
+        return employeeRepository.findAll();
     }
 
-    public Employee createEmployee(Employee employee) {
-        boolean res = employees.add(employee);
-        if (res) {
-            return employee;
+    public Employee getEmployeeById(int eid) {
+        Optional<Employee> employee = employeeRepository.findById(eid);
+        return employee.orElse(null);
+    }
+
+    public Employee getEmployeeByJob(String job) {
+        return employeeRepository.findByJob(job);
+    }
+
+    public String deleteEmployeeById(int eid) {
+        if (employeeRepository.existsById(eid)) {
+            employeeRepository.deleteById(eid);
+            return "EMPLOYEE DELETED SUCCESSFULLY";
         } else {
-            return null;
+            return "Employee not found";
         }
     }
 
-    public Employee getEmployeeById(int id) {
-        for (int i = 0; i < employees.size(); i++) {
-            if (id == employees.get(i).getId()) {
-                return employees.get(i);
-            }
+    public String deleteAllEmployee() {
+        if (!employeeRepository.findAll().isEmpty()) {
+            employeeRepository.deleteAll();
+            return "Employee data deleted Successfully";
+        } else {
+            return "Employee data is empty";
         }
-        return null;
     }
 
-    public String deleteEmployee(int id) {
-        for (int i = 0; i < employees.size(); i++) {
-            if (id == employees.get(i).getId()) {
-                employees.remove(i);
-                return "Employee Deleted Successfully!!";
-            }
+    public String updateRecord(Employee employee) {
+        if (employeeRepository.existsById(employee.getEid())) {
+            employeeRepository.save(employee);
+            return "Employee updated Successfully";
+        } else {
+            return "Employee not found";
         }
-        return "Employee With Id: "+id+" Not Found!";
-    }
-
-    public Employee updateEmployee(int id, Employee updatedEmployee) {
-        for (int i = 0; i < employees.size(); i++) {
-            if (id == employees.get(i).getId()) {
-                employees.get(i).setName(updatedEmployee.getName());
-                employees.get(i).setRole(updatedEmployee.getRole());
-                return employees.get(i);
-            }
-        }
-        return null;
     }
 }

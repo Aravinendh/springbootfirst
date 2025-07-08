@@ -7,39 +7,45 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/employee")
 public class EmployeeController {
-
+    //Service layer
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeService es;
 
-    @GetMapping("/getEmployees")
-    public List<Employee> getAllEmployees(){
-        return employeeService.getAllEmployees();
+
+    @PostMapping
+    public String addEmployee(@RequestBody Employee e){
+        return String.valueOf(es.addEmployee(e.getName(), e.getRole()));
     }
 
-    @PostMapping("/createEmployee")
-    public Employee createEmployee(@RequestBody Employee employee) {
-        return employeeService.createEmployee(employee);
+    @GetMapping
+    public List<Employee> getEmployees(){
+        return es.getAllEmployees();
     }
 
-    @GetMapping("/getEmployeeById/{id}")
-    public Employee getEmployeeById(@PathVariable int id){
-        return employeeService.getEmployeeById(id);
+    @GetMapping("/{eid}")
+    public Employee getEmployeeById(@PathVariable int eid){
+        return es.getEmployeeById(eid);
     }
 
-    @DeleteMapping("/deleteEmployee/{id}")
-    public String deleteEmployee(@PathVariable int id){
-        return employeeService.deleteEmployee(id);
+    @GetMapping("/job/{job}")
+    public Employee getEmployeeByJob(@PathVariable String job){
+        return es.getEmployeeByJob(job);
     }
 
-    @PutMapping("/updateEmployee/{id}")
-    public Employee updateEmployee(@PathVariable int id, @RequestBody Employee employee) {
-        Employee updated = employeeService.updateEmployee(id, employee);
-        if (updated != null) {
-            return updated;
-        } else {
-            throw new RuntimeException("Employee not found with id: " + id);
-        }
+    @DeleteMapping("/{eid}")
+    public String deleteEmployee(@PathVariable int eid){
+        return es.deleteEmployeeById(eid);
+    }
+
+    @DeleteMapping
+    public String deleteAllEmployee(){
+        return es.deleteAllEmployee();
+    }
+
+    @PutMapping("/{eid}")
+    public String updateRecord(@RequestBody Employee employee){
+        return es.updateRecord(employee);
     }
 }
