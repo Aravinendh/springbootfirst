@@ -3,61 +3,55 @@ package com.example.demo.services;
 import com.example.demo.models.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmployeeService {
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    EmployeeRepository empRepo;
 
-    public Employee addEmployee(String name, String role) {
-        Employee e = new Employee();
-        e.setName(name);
-        e.setRole(role);
-        return employeeRepository.save(e); // eid will be auto-generated
+    public List<Employee> getEmployees(){
+        return empRepo.findAll();
     }
 
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public Employee getEmployeeById(int id){
+        return empRepo.findReferenceById(id); // (or)
+//        return empRepo.findById(id).get(); // (or)
+//        return empRepo.findById(id); -> then the return type should be Optional<Employee> // (or)
+//        return empRepo.findById(id).orElse(new Employee);
     }
 
-    public Employee getEmployeeById(int eid) {
-        Optional<Employee> employee = employeeRepository.findById(eid);
-        return employee.orElse(null);
+    public List<Employee> getEmployeeByJob(String job){
+        return empRepo.findByJob(job);
     }
 
-    public Employee getEmployeeByJob(String job) {
-        return employeeRepository.findByJob(job);
+    public List<Employee> getEmployeeByName(String name){
+        return empRepo.findByName(name);
     }
 
-    public String deleteEmployeeById(int eid) {
-        if (employeeRepository.existsById(eid)) {
-            employeeRepository.deleteById(eid);
-            return "EMPLOYEE DELETED SUCCESSFULLY";
-        } else {
-            return "Employee not found";
-        }
+    public String addEmployee(Employee emp){
+        empRepo.save(emp);
+        return "Employee added Successfully";
     }
 
-    public String deleteAllEmployee() {
-        if (!employeeRepository.findAll().isEmpty()) {
-            employeeRepository.deleteAll();
-            return "Employee data deleted Successfully";
-        } else {
-            return "Employee data is empty";
-        }
+    public String updateEmployee(int id,Employee emp){
+        empRepo.save(emp);
+        return "Employee updated successfully";
     }
 
-    public String updateRecord(Employee employee) {
-        if (employeeRepository.existsById(employee.getEid())) {
-            employeeRepository.save(employee);
-            return "Employee updated Successfully";
-        } else {
-            return "Employee not found";
-        }
+    public String deleteEmployees(){
+        empRepo.deleteAll();
+        return "All employee deleted Successfully";
+    }
+
+    public String deleteEmployeeById(int id) {
+        empRepo.deleteById(id);
+        return "Employee details deleted Successfully";
     }
 }

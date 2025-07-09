@@ -1,44 +1,21 @@
 package com.example.demo.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+@Data // Generates getters, setters, toString, equals, hashCode
+@AllArgsConstructor // Generates constructor with all fields
+@NoArgsConstructor // Generates constructor with no filed
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name="employee")
 public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int eid;
-
+    @Id // primary key
+//    @GeneratedValue(strategy = GenerationType.IDENTITY) - if you give this you should not give this field in input this will be auto generated
+    private int id;
     private String name;
     private String job;
-
-    public int getEid() {
-        return eid;
-    }
-
-    public void setEid(int eid) {
-        this.eid = eid;
-    }
-
-    public void setRole(String role) {
-        this.job=role;
-    }
-
-    public String getRole() {
-        return job;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
