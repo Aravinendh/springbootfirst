@@ -3,9 +3,7 @@ package com.example.demo.services;
 import com.example.demo.models.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,44 +12,38 @@ import java.util.List;
 public class EmployeeService {
 
     @Autowired
-    EmployeeRepository empRepo;
+    private EmployeeRepository employeeRepository;
 
-    public List<Employee> getEmployees(){
-        return empRepo.findAll();
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
     }
 
-    public Employee getEmployeeById(int id){
-        return empRepo.findReferenceById(id); // (or)
-//        return empRepo.findById(id).get(); // (or)
-//        return empRepo.findById(id); -> then the return type should be Optional<Employee> // (or)
-//        return empRepo.findById(id).orElse(new Employee);
+    public Employee createEmployee(Employee employee) {
+        if (employee.getId() != 0 && employeeRepository.existsById(employee.getId())) {
+            throw new RuntimeException("Employee already exists with id: " + employee.getId());
+        }
+        return employeeRepository.save(employee);
     }
 
-    public List<Employee> getEmployeeByJob(String job){
-        return empRepo.findByJob(job);
+
+    public Employee getEmployeeById(int id) {
+        return employeeRepository.findById(id).orElse(null);
     }
 
-    public List<Employee> getEmployeeByName(String name){
-        return empRepo.findByName(name);
+    public String deleteEmployee(int id) {
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+            return "Employee Deleted Successfully!!";
+        }
+        return "Employee With Id: "+id+" Not Found!";
     }
 
-    public String addEmployee(Employee emp){
-        empRepo.save(emp);
-        return "Employee added Successfully";
+    public Employee updateEmployee(int id, Employee updatedEmployee) {
+        return employeeRepository.findById(id).map(employee -> {
+            employee.setName(updatedEmployee.getName());
+            employee.setRole(updatedEmployee.getRole());
+            return employeeRepository.save(employee);
+        }).orElse(null);
     }
 
-    public String updateEmployee(int id,Employee emp){
-        empRepo.save(emp);
-        return "Employee updated successfully";
-    }
-
-    public String deleteEmployees(){
-        empRepo.deleteAll();
-        return "All employee deleted Successfully";
-    }
-
-    public String deleteEmployeeById(int id) {
-        empRepo.deleteById(id);
-        return "Employee details deleted Successfully";
-    }
 }
