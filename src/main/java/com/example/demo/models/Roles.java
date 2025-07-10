@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,5 +17,5 @@ public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY  )
     private int roleId;
-    private String rollName;
+    private String roleName;
 }
