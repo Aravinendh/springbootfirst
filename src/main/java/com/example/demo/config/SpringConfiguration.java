@@ -1,4 +1,4 @@
-package com.training.demo.config;
+package com.example.demo.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,7 +30,7 @@ public class SpringConfiguration {
 //                    auth.requestMatchers(HttpMethod.POST,"/employee/createEmployee").hasRole("ADMIN");
 //                    auth.requestMatchers(HttpMethod.PUT,"/employee").hasRole("ADMIN");
 //                    auth.requestMatchers(HttpMethod.DELETE,"/employee/deleteEmployee").hasRole("ADMIN");
-//                    auth.requestMatchers(HttpMethod.GET,"/**").hasAnyRole("ADMIN","USER");
+//                    auth.requestMatchers(HttpMethod.GET,"/").hasAnyRole("ADMIN","USER");
 //                    auth.anyRequest().authenticated();
 //                })
                 .httpBasic(Customizer.withDefaults());
@@ -45,12 +45,12 @@ public class SpringConfiguration {
                 .roles("ADMIN")
                 .build();
 
-        UserDetails Ar = User.builder()
-                .username("Ar")
-                .password(passwordEncoder().encode("Ar"))
+        UserDetails Arun = User.builder()
+                .username("Arun")
+                .password(passwordEncoder().encode("Arun"))
                 .roles("USER")
                 .build();
-        return new InMemoryUserDetailsManager(admin,Ar);
+        return new InMemoryUserDetailsManager(admin,Arun);
 
     }
 }
