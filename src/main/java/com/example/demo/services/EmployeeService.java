@@ -13,6 +13,9 @@ public class EmployeeService {
     @Autowired
     RegisterDetailsRepository registerDetailsRepository;
 
+    public List<RegisterDetails> getAllEmployees(){
+        return registerDetailsRepository.findAll();
+    }
 
     public List<RegisterDetails> getMethod() {
         return registerDetailsRepository.findAll();
