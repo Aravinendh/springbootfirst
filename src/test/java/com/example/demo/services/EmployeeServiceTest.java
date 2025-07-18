@@ -4,7 +4,6 @@ import com.example.demo.models.RegisterDetails;
 import com.example.demo.models.Roles;
 import com.example.demo.models.UserDetailsDto;
 import com.example.demo.repository.RegisterDetailsRepository;
-import com.example.demo.repository.RolesRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

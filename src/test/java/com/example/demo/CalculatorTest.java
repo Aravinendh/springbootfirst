@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import com.example.demo.controllers.Calculator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

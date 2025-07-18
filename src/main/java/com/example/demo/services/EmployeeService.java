@@ -45,20 +45,20 @@ public class EmployeeService {
         registerDetails.setPassword(passwordEncoder.encode(register.getPassword()));
         registerDetails.setUserName(register.getUserName());
         Set<Roles> roles = new HashSet<>();
-        for(String roleName: register.getRoleNames()){
+        for (String roleName : register.getRoleNames()) {
             Roles role = rolesRepository.findByRoleName(roleName)
-                    .orElseThrow(()->new RuntimeException("User not found" + roleName));
+                    .orElseThrow(() -> new RuntimeException("User not found" + roleName));
             roles.add(role);
         }
         registerDetails.setRoles(roles);
-        System.out.println("Registration"+ registerDetails);
+        System.out.println("Registration" + registerDetails);
         registerDetailsRepository.save(registerDetails);
         return "Employee Added Successfully";
     }
 
     public String updateEmployee(int empId, UserDetailsDto details) {
-        RegisterDetails user=registerDetailsRepository.findById(empId)
-                .orElseThrow(()->new RuntimeException("No such user present"));
+        RegisterDetails user = registerDetailsRepository.findById(empId)
+                .orElseThrow(() -> new RuntimeException("No such user present"));
         user.setName(details.getName());
         user.setEmail(details.getEmail());
         user.setPassword(details.getPassword());
@@ -71,4 +71,9 @@ public class EmployeeService {
         registerDetailsRepository.deleteById(empId);
         return "Employee deleted successfully";
     }
+
+    public List<RegisterDetails> getEmployeeByName(String name) {
+        return registerDetailsRepository.findByNameContainingIgnoreCase(name);
+    }
+
 }

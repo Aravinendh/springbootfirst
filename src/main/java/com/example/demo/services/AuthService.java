@@ -1,14 +1,12 @@
 package com.example.demo.services;
 
 import com.example.demo.jwt.JwtTokenProvider;
-import com.example.demo.models.AuthResponse;
 import com.example.demo.models.RegisterDetails;
 import com.example.demo.models.Roles;
 import com.example.demo.models.UserDetailsDto;
 import com.example.demo.repository.RegisterDetailsRepository;
 import com.example.demo.repository.RegisterRepository;
 import com.example.demo.repository.RolesRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,29 +15,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
 
     @Autowired
-    RegisterRepository registerRepository;
+    private RegisterRepository registerRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    RegisterDetailsRepository registerDetailsRepository;
+    private RegisterDetailsRepository registerDetailsRepository;
 
     @Autowired
-    RolesRepository rolesRepository;
+    private RolesRepository rolesRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
+    /**
+     * Registers a new employee with roles and encoded password.
+     */
     public String addNewEmployee(UserDetailsDto register) {
         RegisterDetails registerDetails = new RegisterDetails();
         registerDetails.setEmpId(register.getEmpId());
@@ -50,31 +50,46 @@ public class AuthService {
 
         Set<Roles> roles = new HashSet<>();
         for (String roleName : register.getRoleNames()) {
-            Roles role = rolesRepository.findByRoleName(roleName)
+            Roles role = rolesRepository.findByRoleName(roleName.toUpperCase())
                     .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
             roles.add(role);
         }
 
         registerDetails.setRoles(roles);
-        System.out.println("Registration: " + registerDetails);
         registerDetailsRepository.save(registerDetails);
         return "Employee Registered Successfully";
     }
 
-    public AuthResponse authenticate(RegisterDetails login) {
+    /**
+     * Authenticates user and returns token + user info.
+     */
+    public Map<String, Object> authenticate(RegisterDetails login) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        login.getUserName(), login.getPassword()));
+                        login.getUserName(), login.getPassword())
+        );
 
         String token = jwtTokenProvider.generateToken(authentication);
+
         RegisterDetails user = registerRepository.findByUserName(login.getUserName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Set<String> roleNames = user.getRoles()
-                .stream()
+        List<String> roles = user.getRoles().stream()
                 .map(Roles::getRoleName)
-                .collect(Collectors.toSet());
+                .toList();
 
-        return new AuthResponse(token, user.getUserName(), roleNames);
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("userName", user.getUserName());
+        response.put("roles", roles);
+
+        return response;
+    }
+
+    /**
+     * Fetches user by username.
+     */
+    public Optional<RegisterDetails> getUserByUsername(String username) {
+        return registerRepository.findByUserName(username);
     }
 }
